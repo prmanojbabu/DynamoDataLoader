@@ -56,16 +56,30 @@ function generateData()
     feedBackData.push(item);
     }
 }
+function chunkArray(myArray, chunk_size){
+    var chunks = [], i = 0, n = myArray.length;
+    while (i < n) {
+      chunks.push(myArray.slice(i, i += chunk_size));
+    }
+    return chunks;
+}
+
+
 function generateJSONFiles()
 {
     var dir = './dataFiles';
     var feedBackDataJson = JSON.stringify(feedBackData, null, "\t");
-    var orgIDSJson = JSON.stringify(orgIDS, null, "\t");
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }
-    fs.writeFileSync('./dataFiles/feedBack.json', feedBackDataJson, 'utf8');
-    fs.writeFileSync('./dataFiles/orgID.json', orgIDSJson, 'utf8');
+    else
+    {
+        fs.rmdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir);
+    }
+    var chunks = chunkArray(feedBackData, maxOrgCount*10);
+    chunks.forEach((x, index) => {fs.writeFileSync(`./dataFiles/feedBack_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
+    fs.writeFileSync('./dataFiles/orgID.json', JSON.stringify(orgIDS, null, "\t"), 'utf8');
     console.log('Files Created Successfully');
 }
 

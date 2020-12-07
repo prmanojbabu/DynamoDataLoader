@@ -1,34 +1,40 @@
 var AWS = require("aws-sdk");
 var fs = require('fs');
+AWS.config.update({
+    region: "us-east-1"
+});
 
-function ImportData()
+function ImportData(file)
 {
-    console.log("Importing sample data into DynamoDB. Please wait.");
-    AWS.config.update({
-        region: "us-east-1"
-    });
     var docClient = new AWS.DynamoDB.DocumentClient();
-    var allfeedback = JSON.parse(fs.readFileSync('./dataFiles/feedBack.json', 'utf8'));
-    allfeedback.forEach(function(dataItem) {
+    console.log(`Importing the File ${file}`);
+    var allfeedback = JSON.parse(fs.readFileSync(file, 'utf8'));
+        allfeedback.forEach(function(dataItem) {
         var params = {
             TableName: "STA_FeedBack_Test1",
             Item: dataItem
         };
-    
         docClient.put(params, function(err, data) {
            if (err) {
-               console.error("Unable to add feeds", dataItem.title, ". Error JSON:", JSON.stringify(err, null, 2));
+               console.error(`Unable to add feeds in file ${file}`, dataItem.ID, ". Error JSON:", JSON.stringify(err, null, 2));
            } else {
-               console.log("PutItem succeeded:", dataItem.ID);
+               console.log(`file ${file} PutItem succeeded: ${dataItem.ID}`);
            }
         });
     });
 }
-
-fs.stat('./dataFiles/feedBack.json', function(err, stat) {
+var dir = './dataFiles';
+fs.stat(dir, function(err, stat) {
     if(err == null) {
-        console.log('FeedBack Data File exist');
-        ImportData();
+        console.log("Importing sample data into DynamoDB. Please wait.");
+        console.log('FeedBack Data folder exist');
+        fs.readdirSync(dir).forEach(file => {
+            if(file.startsWith('feedBack_'))
+            {
+                ImportData(dir+'/'+file);
+            }
+          });
+        
     } else if(err.code === 'ENOENT') {
         console.log('FeedBack Data File doesn\'t exists');
         process.exit(1);

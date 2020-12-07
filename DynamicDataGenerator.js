@@ -5,7 +5,6 @@ var fs = require('fs');
 var PromptSync = require('prompt-sync');
 var feedbackSentiment = ["Positive", "Negative", "Neutral"] ;
 var initialSentiment = ["Positive", "Negative",undefined] ;
-var orgID = faker.random.uuid();
 var feedBackData = [];
 var orgIDS = [];
 
@@ -22,15 +21,19 @@ function  validateInput() {
     }
     if(!isNaN(maxOrgCount) && Number(maxOrgCount) >0 && Number(maxOrgCount) <= RecordCount)
     {
-        RecordCount = Number(RecordCount);
+        maxOrgCount = Number(maxOrgCount);
     }
     else {
         console.log('Invalid Maximum records per Organization, setting it default value');
-        RecordCount = 20000;
+        maxOrgCount = 2000;
     }
+
+    console.log('Total Records: '+ RecordCount);
+    console.log('Total Records per Org: '+ maxOrgCount);
 }
 function generateData()
 {
+    var orgId = faker.random.uuid();
     for(i=0; i<RecordCount; i++)
     {
         if(i % maxOrgCount === 0)    
@@ -41,7 +44,7 @@ function generateData()
         var feedbackValue = _.sample(feedbackSentiment);
         var initialValue =  _.sample((_.filter(initialSentiment, (x)=> {return x!=feedbackValue;})));
         var item = {
-                "OrgID":  orgID,
+                "OrgID":  orgId,
                 "ID": faker.random.uuid(),
                 "Phrase":  faker.random.words(faker.random.number({min: 3, max: 20})),
                 "SentimentFeedBackValue" : feedbackValue,
@@ -56,13 +59,14 @@ function generateData()
 function generateJSONFiles()
 {
     var dir = './dataFiles';
-    var feedBackDataJson = JSON.stringify(feedBackData);
-    var orgIDSJson = JSON.stringify(orgIDS);
+    var feedBackDataJson = JSON.stringify(feedBackData, null, "\t");
+    var orgIDSJson = JSON.stringify(orgIDS, null, "\t");
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }
     fs.writeFileSync('./dataFiles/feedBack.json', feedBackDataJson, 'utf8');
     fs.writeFileSync('./dataFiles/orgID.json', orgIDSJson, 'utf8');
+    console.log('Files Created Successfully');
 }
 
 

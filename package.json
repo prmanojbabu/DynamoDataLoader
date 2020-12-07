@@ -1,5 +1,8 @@
 {
     "dependencies": {
-        "aws-sdk": "^2.803.0"
+        "aws-sdk": "^2.803.0",
+        "faker": "^5.1.0",
+        "lodash": "^4.17.20",
+        "prompt-sync": "^4.2.0"
     }
 }

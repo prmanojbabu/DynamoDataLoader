@@ -23,8 +23,6 @@ function ImportData()
            }
         });
     });
-    console.log('Data Imported Successfully');
-    process.exit(1);
 }
 
 fs.stat('./dataFiles/feedBack.json', function(err, stat) {

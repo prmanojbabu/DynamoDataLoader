@@ -50,7 +50,7 @@ var params = {
               'CreatedBy',
               'CreatedDate',
               "SourceInteractionID",
-              "SentimentOriginalValue",
+              "SentimentInitialValue",
               "SentimentFeedBackValue",
             ],
             ProjectionType: "INCLUDE"

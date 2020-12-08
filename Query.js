@@ -13,45 +13,108 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
 */
+
 var AWS = require("aws-sdk");
+var prompt = require('prompt-sync')({sigint: true});
+var PromptSync = require('prompt-sync');
+
+var InputOrgID = prompt('Enter The Organization ID: ', null);
+var InputID = prompt('Enter The ID: ', null);
+var InputPhrase=prompt('Enter The Phrase: ', null);
 
 AWS.config.update({
     region: "us-east-1"
 });
 
+function InputAnalysis()
+{
+    if(InputOrgID&&InputID&&!InputPhrase)
+    {
+        QueryWithBaseTableIndex();
+    }
+    else if(InputOrgID&&!InputID&&!InputPhrase)
+    {
+        QueryWithOrgID();
+    }
+    else if(InputOrgID&&!InputID&&InputPhrase)
+    {
+        QueryWithGlobalSecondaryIndexOrgIDPhrase();
+    }
+    else if(!InputOrgID&&!InputID&&!InputPhrase)
+    {
+        QueryTheWholeTable();
+    }
+}
+InputAnalysis();
+
+
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-console.log("Querying by OrgID");
+var params;
+function QueryWithBaseTableIndex()
+{
+    console.log("Querying With Base Table Index");
+    params = {
+        TableName : "STA_FeedBack_Test1",
+        KeyConditionExpression: "#OrgID = :OrgID and #ID = :ID",
+        ExpressionAttributeNames:{
+            "#OrgID": "OrgID",
+            "#ID": "ID"
+        },
+        ExpressionAttributeValues: {
+            ":OrgID": InputOrgID,
+            ":ID": InputID
+        }
+    };
+}
+function QueryWithOrgID()
+{
+    console.log("Querying On The Basis Of Organisation");
+    params = {
+        TableName : "STA_FeedBack_Test1",
+        KeyConditionExpression: "#OrgID = :OrgID",
+        ExpressionAttributeNames:{
+            "#OrgID": "OrgID",
+        },
+        ExpressionAttributeValues: {
+            ":OrgID": InputOrgID
+        }
+    };
+}
+function QueryWithGlobalSecondaryIndexOrgIDPhrase()
+{
+    console.log("Querying by GSI");
+    params = {
+        TableName : "STA_FeedBack_Test1",
+        IndexName : "OrgID-Phrase",
+        KeyConditionExpression: "#OrgID = :OrgID and #Phrase = :Phrase",
+        ExpressionAttributeNames:{
+            "#OrgID": "OrgID",
+            "#Phrase": "Phrase"
+        },
+        ExpressionAttributeValues: {
+            ":OrgID": InputOrgID,
+            ":Phrase": InputPhrase
+        }
+    };
+}
+function QueryTheWholeTable()
+{
+    console.log("Querying The Whole Table")
+    params = {
+        TableName : "STA_FeedBack_Test1"
+    }
+}
 
-var params = {
-    ExpressionAttributeNames:{
-        "#OrgID": "OrgID",
-        "#ID": "ID",
-        "#Phrase": "Phrase",
-        "#SourceInteractionID": "SourceInteractionID",
-        "#SentimentFeedBackValue": "SentimentFeedBackValue",
-        "#SentimentInitialValue": "SentimentInitialValue",
-        "#CreatedBy": "CreatedBy",
-        "#CreatedDate": "CreatedDate"
-        
-    },
-    ExpressionAttributeValues: {
-        ":a": ""
-    },
-    KeyConditionExpression: "#OrgID= :a", 
-    ProjectionExpression: "#OrgID, #ID, #Phrase, #SourceInteractionID, #SentimentFeedBackValue, #SentimentInitialValue, #CreatedBy, #CreatedDate", 
-    TableName: "STA_FeedBack_Test1"
-   };
+
    console.time("query");
-docClient.query(params, function(err, data) {
+    docClient.query(params, function(err, data) {
     if (err) {
         console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
     } else {
         
         console.log("Query succeeded.");
-        data.Items.forEach(function(item) {
-            console.log(item);
-        });
+        console.log(data.Items.count);
         
     }
     console.timeEnd("query");

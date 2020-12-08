@@ -13,15 +13,16 @@
  * specific language governing permissions and limitations under the License.
 */
 var AWS = require("aws-sdk");
+require('dotenv').config();
 
 AWS.config.update({
-    region: "us-east-1"
+    region: process.env.region
 });
 
 var dynamodb = new AWS.DynamoDB();
 
 var params = {
-    TableName : "STA_FeedBack_Test1",
+    TableName : process.env.dbName,
     BillingMode: "PAY_PER_REQUEST",
     AttributeDefinitions: [
         { AttributeName: "OrgID", AttributeType: "S" },
@@ -44,6 +45,25 @@ var params = {
                 AttributeName: 'Phrase', 
                 KeyType: "RANGE"
               },
+          ],
+          Projection: {
+            NonKeyAttributes: [
+              'CreatedBy',
+              'CreatedDate',
+              "SourceInteractionID",
+              "SentimentInitialValue",
+              "SentimentFeedBackValue",
+            ],
+            ProjectionType: "INCLUDE"
+          }
+        },
+        {
+          IndexName: 'OrgID', 
+          KeySchema: [ 
+            {
+              AttributeName: 'OrgID', 
+              KeyType: "HASH"
+            }
           ],
           Projection: {
             NonKeyAttributes: [

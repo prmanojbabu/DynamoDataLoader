@@ -3,6 +3,7 @@ var _ = require('lodash');
 var prompt = require('prompt-sync')({sigint: true});
 var fs = require('fs');
 var PromptSync = require('prompt-sync');
+require('dotenv').config();
 var feedbackSentiment = ["Positive", "Negative", "Neutral"] ;
 var initialSentiment = ["Positive", "Negative",undefined] ;
 var feedBackData = [];
@@ -78,7 +79,6 @@ function chunkArray(myArray, chunk_size){
 function generateJSONFiles()
 {
     var dir = './dataFiles';
-    var feedBackDataJson = JSON.stringify(feedBackData, null, "\t");
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }

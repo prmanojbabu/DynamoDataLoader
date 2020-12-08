@@ -1,7 +1,8 @@
 var AWS = require("aws-sdk");
 var fs = require('fs');
+require('dotenv').config();
 AWS.config.update({
-    region: "us-east-1"
+    region: process.env.region
 });
 
 
@@ -39,12 +40,25 @@ async function ImportData(file)
     await Promise.all(allOrgID.map(async (orgID) => { await GetDataByOrgID(orgID); }));
 }
 
+function generateDir()
+{
+    var dir = './ResultFiles';
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+    else
+    {
+        fs.rmdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir);
+    }
+}
+
 async function GetDataByOrgID(orgID)
 {
     var awsdynamo = new AWS.DynamoDB();
     params = {
-        TableName : "STA_FeedBack_Test1",
-        IndexName : "OrgID-Phrase",
+        TableName : process.env.dbName,
+        IndexName : "OrgID",
         KeyConditionExpression: "OrgID = :orgval",
         ExpressionAttributeValues: {
             ":orgval": {S: orgID}
@@ -60,12 +74,10 @@ async function GetDataByOrgID(orgID)
             console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
         } else {
             console.timeEnd(orgID);
-            console.log("Query succeeded.");
-            fs.writeFileSync(`./dataFiles/query.json`, JSON.stringify(data, null, "\t"), 'utf8');
+            fs.writeFileSync(`./ResultFiles/query_${orgID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
         }
-    
     });
-
 }
-GetDataByOrgID("60a871c4-0936-4439-b532-e386df577a94");
+generateDir();
+ImportDir();
 

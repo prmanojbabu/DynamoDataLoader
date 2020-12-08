@@ -1,7 +1,8 @@
 var AWS = require("aws-sdk");
 var fs = require('fs');
+require('dotenv').config();
 AWS.config.update({
-    region: "us-east-1"
+    region: process.env.region
 });
  
 function ImportDir(){
@@ -42,7 +43,7 @@ async function putData(file, dataItem)
 {
     var docClient = new AWS.DynamoDB.DocumentClient();
     var params = {
-        TableName: "STA_FeedBack_Test1",
+        TableName:process.env.dbName,
         Item: dataItem
     };
     await docClient.put(params, (err, data) => {

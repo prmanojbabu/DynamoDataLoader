@@ -36,7 +36,7 @@ var params = {
         
     },
     ExpressionAttributeValues: {
-        ":a": "1590a168-c6e5-4a6d-99c7-6c622c5604d1"
+        ":a": ""
     },
     KeyConditionExpression: "#OrgID= :a", 
     ProjectionExpression: "#OrgID, #ID, #Phrase, #SourceInteractionID, #SentimentFeedBackValue, #SentimentInitialValue, #CreatedBy, #CreatedDate", 

@@ -10,6 +10,7 @@ var orgIDS = [];
 
 var RecordCount = prompt('Enter Total Record required to load(Default :20000):', 20000);
 var maxOrgCount = prompt('Enter Maximum records per Organization((Default :2000)):', 2000);
+var maxRecordPerFile = prompt('Enter Maximum records per File((Default :20000)):', 20000);
 function  validateInput() {
     if(!isNaN(RecordCount) && Number(RecordCount) >0)
     {
@@ -27,9 +28,18 @@ function  validateInput() {
         console.log('Invalid Maximum records per Organization, setting it default value');
         maxOrgCount = 2000;
     }
+    if(!isNaN(maxRecordPerFile) && Number(maxRecordPerFile) >0)
+    {
+        maxRecordPerFile = Number(maxRecordPerFile);
+    }
+    else {
+        console.log('Invalid Max Record per file, setting it default value');
+        maxRecordPerFile = 20000;
+    }
 
     console.log('Total Records: '+ RecordCount);
     console.log('Total Records per Org: '+ maxOrgCount);
+    console.log('Total Records per file: '+ maxRecordPerFile);
 }
 function generateData()
 {

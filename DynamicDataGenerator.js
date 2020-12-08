@@ -87,9 +87,10 @@ function generateJSONFiles()
         fs.rmdirSync(dir, { recursive: true });
         fs.mkdirSync(dir);
     }
-    var chunks = chunkArray(feedBackData, maxOrgCount*10);
-    chunks.forEach((x, index) => {fs.writeFileSync(`./dataFiles/feedBack_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
-    fs.writeFileSync('./dataFiles/orgID.json', JSON.stringify(orgIDS, null, "\t"), 'utf8');
+    var chunksFeedback = chunkArray(feedBackData, maxRecordPerFile);
+    var chunksOrg = chunkArray(orgIDS, maxRecordPerFile/10);
+    chunksFeedback.forEach((x, index) => {fs.writeFileSync(`./dataFiles/feedBack_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
+    chunksOrg.forEach((x, index) => {fs.writeFileSync(`./dataFiles/org_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
     console.log('Files Created Successfully');
 }
 

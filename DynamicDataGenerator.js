@@ -5,7 +5,7 @@ var fs = require('fs');
 var PromptSync = require('prompt-sync');
 require('dotenv').config();
 var feedbackSentiment = ["Positive", "Negative", "Neutral"] ;
-var initialSentiment = ["Positive", "Negative",undefined] ;
+var initialSentiment = ["Positive", "Negative","Neutral"] ;
 var feedBackData = [];
 var orgIDS = [];
 

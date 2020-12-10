@@ -27,55 +27,10 @@ var params = {
     AttributeDefinitions: [
         { AttributeName: "OrgID", AttributeType: "S" },
         { AttributeName: "ID", AttributeType: "S" },
-        { AttributeName: "Phrase", AttributeType: "S" },
     ],
     KeySchema: [       
         { AttributeName: "OrgID", KeyType: "HASH"},  //Partition key
         { AttributeName: "ID", KeyType: "RANGE" }  //Sort key
-    ],
-    GlobalSecondaryIndexes: [
-        {
-          IndexName: 'OrgID-Phrase', 
-          KeySchema: [ 
-            {
-              AttributeName: 'OrgID', 
-              KeyType: "HASH"
-            },
-            {
-                AttributeName: 'Phrase', 
-                KeyType: "RANGE"
-              },
-          ],
-          Projection: {
-            NonKeyAttributes: [
-              'CreatedBy',
-              'CreatedDate',
-              "SourceInteractionID",
-              "SentimentInitialValue",
-              "SentimentFeedBackValue",
-            ],
-            ProjectionType: "INCLUDE"
-          }
-        },
-        {
-          IndexName: 'OrgID', 
-          KeySchema: [ 
-            {
-              AttributeName: 'OrgID', 
-              KeyType: "HASH"
-            }
-          ],
-          Projection: {
-            NonKeyAttributes: [
-              'CreatedBy',
-              'CreatedDate',
-              "SourceInteractionID",
-              "SentimentInitialValue",
-              "SentimentFeedBackValue",
-            ],
-            ProjectionType: "INCLUDE"
-          }
-        },
     ],
     Tags: [{ Key: "Owner" , Value: "Dev-CloudSTAFeedbackService@genesys.com"}] 
 };

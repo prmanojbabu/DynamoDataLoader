@@ -4,7 +4,19 @@ require('dotenv').config();
 AWS.config.update({
     region: process.env.region
 });
- 
+
+function generateResultDir()
+{
+    var dir = './ResultInsert';
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+    else
+    {
+        fs.rmdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir);
+    }
+}
 function ImportDir(){
     var dir = './dataFiles';
     var files = [];
@@ -44,17 +56,23 @@ async function putData(file, dataItem)
     var docClient = new AWS.DynamoDB.DocumentClient();
     var params = {
         TableName:process.env.dbName,
-        Item: dataItem
+        Item: dataItem,
+        ReturnConsumedCapacity: "INDEXES",
+        ReturnItemCollectionMetrics: "SIZE",
+        ReturnValues: 'ALL_OLD',
+        ConditionExpression: 'attribute_not_exists(ID) AND attribute_not_exists(OrgID)'  
     };
     await docClient.put(params, (err, data) => {
        if (err) {
-           console.error(`Unable to add feeds in file ${file}`, dataItem.ID, ". Error JSON:", JSON.stringify(err, null, 2));
+           console.error(`Unable to add feeds in file ${file}`, params.Item.ID, ". Error JSON:", JSON.stringify(err, null, 2));
        } else {
-           console.log(`File ${file} PutItem succeeded: ${JSON.stringify(dataItem.ID)}`);
+            console.log(params.Item.ID + ' ' + JSON.stringify(data, null, "\t"));
+           fs.writeFileSync(`./ResultInsert/Insert_Output_${params.Item.ID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
        }
     });
 }
 
+generateResultDir();
 ImportDir();
 
 

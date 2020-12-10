@@ -64,7 +64,7 @@ async function putData(file, dataItem)
        if (err) {
            console.error(`Unable to add feeds in file ${file}`, params.Item.ID, ". Error JSON:", JSON.stringify(err, null, 2));
        } else {
-            console.log(params.Item.ID + ' ' + JSON.stringify(data, null, "\t"));
+           console.log("File :"+ file+ " Success: "+ params.Item.ID );
            fs.writeFileSync(`./ResultInsert/Insert_Output_${params.Item.ID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
        }
     });

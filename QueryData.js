@@ -37,7 +37,7 @@ async function ImportData(file)
 {
     console.log(`Importing the File ${file}`);
     var allOrgID = JSON.parse(fs.readFileSync(file, 'utf8'));
-    await Promise.all(allOrgID.map(async (orgID) => { await GetDataByOrgID(orgID); }));
+    await Promise.all(allOrgID.map(async (orgID) => { await QueryDataByOrgID(orgID); }));
 }
 
 function generateDir()
@@ -53,19 +53,19 @@ function generateDir()
     }
 }
 
-async function GetDataByOrgID(orgID)
+async function QueryDataByOrgID(orgID)
 {
     var awsdynamo = new AWS.DynamoDB();
     params = {
         TableName : process.env.dbName,
-        IndexName : "OrgID",
         KeyConditionExpression: "OrgID = :orgval",
         ExpressionAttributeValues: {
             ":orgval": {S: orgID}
         },
        Limit: '2000',
-       Select: 'ALL_PROJECTED_ATTRIBUTES',
-       ReturnConsumedCapacity: 'INDEXES', // | TOTAL | NONE,
+       ReturnConsumedCapacity: 'TOTAL', // | TOTAL | NONE,
+       ProjectionExpression:"OrgID, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
+       // Select: "COUNT", //Select: ALL_ATTRIBUTES | ALL_PROJECTED_ATTRIBUTES | SPECIFIC_ATTRIBUTES | COUNT
     };
     console.log(`Quering for Org : ${orgID}`);
     console.time(orgID);
@@ -75,6 +75,35 @@ async function GetDataByOrgID(orgID)
         } else {
             console.timeEnd(orgID);
             fs.writeFileSync(`./ResultFiles/query_${orgID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
+        }
+    });
+}
+
+async function GetDataByOrgID(orgID)  // Dont Use it
+{
+    var awsdynamo = new AWS.DynamoDB();
+    params = {
+        TableName : process.env.dbName,
+        Key: {
+            "OrgID": {
+              S: orgID
+             },
+             "ID":{
+              S: "1f7a0d2d-9faf-4307-bea9-ca43caf60929"   
+             }
+           }, 
+       ReturnConsumedCapacity: 'TOTAL', // | TOTAL | NONE,
+       ProjectionExpression:"OrgID, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
+       // Select: "COUNT", //Select: ALL_ATTRIBUTES | ALL_PROJECTED_ATTRIBUTES | SPECIFIC_ATTRIBUTES | COUNT
+    };
+    console.log(`Get for Org : ${orgID}`);
+    console.time(orgID);
+    awsdynamo.getItem(params, function(err, data) {
+        if (err) {
+            console.log("Unable to Get. Error:", JSON.stringify(err, null, 2));
+        } else {
+            console.timeEnd(orgID);
+            fs.writeFileSync(`./ResultFiles/Get_${orgID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
         }
     });
 }

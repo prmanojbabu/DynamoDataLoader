@@ -58,7 +58,7 @@ function generateData()
                 "OrgID":  orgId,
                 "ID": faker.random.uuid(),
                 "Phrase":  faker.random.words(faker.random.number({min: 3, max: 20})),
-                "SentimentFeedBackValue" : feedbackValue,
+                "SentimentFeedbackValue" : feedbackValue,
                 "SentimentInitialValue" : initialValue,
                 "SourceInteractionID": _.sample([faker.random.uuid(), undefined]),
                 "CreatedBy": faker.random.uuid(),

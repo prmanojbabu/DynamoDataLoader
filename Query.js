@@ -48,7 +48,7 @@ function InputAnalysis()
 InputAnalysis();
 
 
-var docClient = new AWS.DynamoDB.DocumentClient();
+var docClient = new AWS.DynamoDB();
 
 var params;
 function QueryWithBaseTableIndex()
@@ -62,8 +62,8 @@ function QueryWithBaseTableIndex()
             "#ID": "ID"
         },
         ExpressionAttributeValues: {
-            ":OrgID": InputOrgID,
-            ":ID": InputID
+            ":OrgID": { S: InputOrgID},
+            ":ID": { S: InputID}
         }
     };
 }
@@ -77,7 +77,7 @@ function QueryWithOrgID()
             "#OrgID": "OrgID",
         },
         ExpressionAttributeValues: {
-            ":OrgID": InputOrgID
+            ":OrgID": { S: InputOrgID}
         }
     };
 }
@@ -93,8 +93,8 @@ function QueryWithGlobalSecondaryIndexOrgIDPhrase()
             "#Phrase": "Phrase"
         },
         ExpressionAttributeValues: {
-            ":OrgID": InputOrgID,
-            ":Phrase": InputPhrase
+            ":OrgID": { S: InputOrgID},
+            ":Phrase": { S : InputPhrase}
         }
     };
 }
@@ -114,8 +114,10 @@ function QueryTheWholeTable()
     } else {
         
         console.log("Query succeeded.");
-        console.log(data.Items.count);
-        
+        // data.Items.forEach(function(item) {
+        //     console.log(item);
+        // });
+        console.log(data.Items.length);
     }
     console.timeEnd("query");
 });

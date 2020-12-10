@@ -58,8 +58,6 @@ async function putData(file, dataItem)
         TableName:process.env.dbName,
         Item: dataItem,
         ReturnConsumedCapacity: "INDEXES",
-        ReturnItemCollectionMetrics: "SIZE",
-        ReturnValues: 'ALL_OLD',
         ConditionExpression: 'attribute_not_exists(ID) AND attribute_not_exists(OrgID)'  
     };
     await docClient.put(params, (err, data) => {

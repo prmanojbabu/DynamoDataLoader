@@ -58,14 +58,15 @@ async function putData(file, dataItem)
         TableName:process.env.dbName,
         Item: dataItem,
         ReturnConsumedCapacity: "INDEXES",
-        ConditionExpression: 'attribute_not_exists(ID) AND attribute_not_exists(OrgID)'  
+        ConditionExpression: 'attribute_not_exists(OrgID) AND attribute_not_exists(StemmedPhrase)'  
     };
     await docClient.put(params, (err, data) => {
        if (err) {
            console.error(`Unable to add feeds in file ${file}`, params.Item.ID, ". Error JSON:", JSON.stringify(err, null, 2));
        } else {
-           console.log("File :"+ file+ " Success: "+ params.Item.ID );
-           fs.writeFileSync(`./ResultInsert/Insert_Output_${params.Item.ID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
+            console.log("File :"+ file+ " Success: "+ params.Item.ID );
+            fs.appendFileSync(`./ResultInsert/Insert_Output_${params.Item.OrgID}.json`,JSON.stringify(params.Item, null, "\t")+",\n", 'utf8');
+
        }
     });
 }

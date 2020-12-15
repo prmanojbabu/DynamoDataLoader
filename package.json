@@ -3,7 +3,10 @@
         "aws-sdk": "^2.803.0",
         "dotenv": "^8.2.0",
         "faker": "^5.1.0",
+        "langdetect": "^0.2.1",
+        "language-identifier": "^1.0.8",
         "lodash": "^4.17.20",
-        "prompt-sync": "^4.2.0"
+        "prompt-sync": "^4.2.0",
+        "stemmer_es": "^1.0.2"
     }
 }

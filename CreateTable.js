@@ -26,13 +26,58 @@ var params = {
     BillingMode: "PAY_PER_REQUEST",
     AttributeDefinitions: [
         { AttributeName: "OrgID", AttributeType: "S" },
-        { AttributeName: "ID", AttributeType: "S" },
+        { AttributeName: "SortKey", AttributeType: "S" },
+        { AttributeName: "TranscriptId", AttributeType: "S"},
+        { AttributeName: "ModifiedDate", AttributeType: "S"},
     ],
     KeySchema: [       
         { AttributeName: "OrgID", KeyType: "HASH"},  //Partition key
-        { AttributeName: "ID", KeyType: "RANGE" }  //Sort key
+        { AttributeName: "SortKey", KeyType: "RANGE" }, //Sort key
+
     ],
-    Tags: [{ Key: "Owner" , Value: "Dev-CloudSTAFeedbackService@genesys.com"}] 
+    Tags: [{ Key: "Owner" , Value: "Dev-CloudSTAFeedbackService@genesys.com"}],
+    LocalSecondaryIndexes: [
+        {
+          IndexName: 'Index-OrgID-TranscriptId',
+          KeySchema: [ 
+            { AttributeName: "OrgID", KeyType: "HASH"}, 
+            { AttributeName: "TranscriptId", KeyType: "RANGE"},
+          ],
+          Projection: {
+            NonKeyAttributes: [
+                "ID",
+                "Phrase",
+                "SentimentFeedbackValue",
+                "SentimentInitialValue",
+                "ModifiedBy",
+                "StemmedPhrase",
+                "Language",
+                "IsDeleted"
+            ],
+            ProjectionType: "INCLUDE"
+          }
+        },
+        {
+            IndexName: 'Index-OrgID-ModifiedDate',
+            KeySchema: [ 
+              { AttributeName: "OrgID", KeyType: "HASH"}, 
+              { AttributeName: "ModifiedDate", KeyType: "RANGE"},
+            ],
+            Projection: {
+                NonKeyAttributes: [
+                    "ID",
+                    "Phrase",
+                    "SentimentFeedbackValue",
+                    "SentimentInitialValue",
+                    "ModifiedBy",
+                    "StemmedPhrase",
+                    "Language",
+                    "IsDeleted"
+                ],
+                ProjectionType: "INCLUDE"
+              }
+          }
+      ]
 };
 
 dynamodb.createTable(params, function(err, data) {

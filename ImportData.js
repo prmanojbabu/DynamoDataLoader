@@ -58,7 +58,7 @@ async function putData(file, dataItem)
         TableName:process.env.dbName,
         Item: dataItem,
         ReturnConsumedCapacity: "INDEXES",
-        ConditionExpression: 'attribute_not_exists(OrgID) AND attribute_not_exists(StemmedPhrase)'  
+        ConditionExpression: 'attribute_not_exists(OrgID) AND attribute_not_exists(SortKey)'  
     };
     await docClient.put(params, (err, data) => {
        if (err) {

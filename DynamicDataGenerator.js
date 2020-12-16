@@ -4,8 +4,11 @@ var prompt = require('prompt-sync')({sigint: true});
 var fs = require('fs');
 var PromptSync = require('prompt-sync');
 require('dotenv').config();
+const stemmer_es = require('stemmer_es');
+var langdetect = require('langdetect');
 var feedbackSentiment = ["Positive", "Negative", "Neutral"] ;
 var initialSentiment = ["Positive", "Negative","Neutral"] ;
+var BooleanIsDeleted = ["False"] ;
 var feedBackData = [];
 var orgIDS = [];
 
@@ -54,15 +57,21 @@ function generateData()
         }
         var feedbackValue = _.sample(feedbackSentiment);
         var initialValue =  _.sample((_.filter(initialSentiment, (x)=> {return x!=feedbackValue;})));
+        var FlagIsDeleted= _.sample(BooleanIsDeleted);
+        var phrase = faker.random.words(faker.random.number({min: 3, max: 20}))
         var item = {
                 "OrgID":  orgId,
                 "ID": faker.random.uuid(),
-                "Phrase":  faker.random.words(faker.random.number({min: 3, max: 20})),
+                "Phrase":  phrase,
+                "StemmedPhrase": stemmer_es.stem(phrase),
+                "Language": langdetect.detectOne(phrase),
+                "TranscriptId":  _.sample([faker.random.uuid(), undefined]),
                 "SentimentFeedbackValue" : feedbackValue,
                 "SentimentInitialValue" : initialValue,
-                "SourceInteractionID": _.sample([faker.random.uuid(), undefined]),
-                "CreatedBy": faker.random.uuid(),
-                "CreatedDate": faker.date.between('2000-01-01T00:00:00.000Z', '2020-12-01T00:00:00.000Z')
+                "ModifiedBy": faker.random.uuid(),
+                "ModifiedDate": faker.date.between('2000-01-01T00:00:00.000Z', '2020-12-01T00:00:00.000Z'),
+                "IsDeleted": FlagIsDeleted,
+                "SortKey" : `Lang_${langdetect.detectOne(phrase)}|StemmedPhrase_${stemmer_es.stem(phrase)}`
                 };
     feedBackData.push(item);
     }

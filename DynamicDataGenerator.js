@@ -8,9 +8,8 @@ const stemmer_es = require('stemmer_es');
 var langdetect = require('langdetect');
 var feedbackSentiment = ["Positive", "Negative", "Neutral"] ;
 var initialSentiment = ["Positive", "Negative","Neutral"] ;
-var BooleanIsDeleted = ["False"] ;
 var feedBackData = [];
-var orgIDS = [];
+var OrgIdS = [];
 
 var RecordCount = prompt('Enter Total Record required to load(Default :20000):', 20000);
 var maxOrgCount = prompt('Enter Maximum records per Organization((Default :2000)):', 2000);
@@ -47,21 +46,20 @@ function  validateInput() {
 }
 function generateData()
 {
-    var orgId = faker.random.uuid();
+    var OrgId = faker.random.uuid();
     for(i=0; i<RecordCount; i++)
     {
         if(i % maxOrgCount === 0)    
         {
-            orgId=faker.random.uuid();
-            orgIDS.push(orgId);    
+            OrgId=faker.random.uuid();
+            OrgIdS.push(OrgId);    
         }
         var feedbackValue = _.sample(feedbackSentiment);
         var initialValue =  _.sample((_.filter(initialSentiment, (x)=> {return x!=feedbackValue;})));
-        var FlagIsDeleted= _.sample(BooleanIsDeleted);
-        var phrase = faker.random.words(faker.random.number({min: 3, max: 20}))
+        var phrase = faker.random.words(faker.random.number({min: 3, max: 20}));
         var item = {
-                "OrgID":  orgId,
-                "ID": faker.random.uuid(),
+                "OrgId":  OrgId,
+                "Id": faker.random.uuid(),
                 "Phrase":  phrase,
                 "StemmedPhrase": stemmer_es.stem(phrase),
                 "Language": langdetect.detectOne(phrase),
@@ -70,8 +68,8 @@ function generateData()
                 "SentimentInitialValue" : initialValue,
                 "ModifiedBy": faker.random.uuid(),
                 "ModifiedDate": faker.date.between('2000-01-01T00:00:00.000Z', '2020-12-01T00:00:00.000Z'),
-                "IsDeleted": FlagIsDeleted,
-                "SortKey" : `Lang_${langdetect.detectOne(phrase)}|StemmedPhrase_${stemmer_es.stem(phrase)}`
+                "IsDeleted": false,
+                "SortKey" : `SentimentFeedback|Lang_${langdetect.detectOne(phrase)}|StemmedPhrase_${stemmer_es.stem(phrase)}`
                 };
     feedBackData.push(item);
     }
@@ -97,7 +95,7 @@ function generateJSONFiles()
         fs.mkdirSync(dir);
     }
     var chunksFeedback = chunkArray(feedBackData, maxRecordPerFile);
-    var chunksOrg = chunkArray(orgIDS, maxRecordPerFile/10);
+    var chunksOrg = chunkArray(OrgIdS, maxRecordPerFile/10);
     chunksFeedback.forEach((x, index) => {fs.writeFileSync(`./dataFiles/feedBack_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
     chunksOrg.forEach((x, index) => {fs.writeFileSync(`./dataFiles/org_${index}.json`, JSON.stringify(x, null, "\t"), 'utf8');});
     console.log('Files Created Successfully');

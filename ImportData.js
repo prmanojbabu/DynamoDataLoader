@@ -55,20 +55,57 @@ async function putData(file, dataItem)
 {
     var docClient = new AWS.DynamoDB.DocumentClient();
     var params = {
-        TableName:process.env.dbName,
-        Item: dataItem,
-        ReturnConsumedCapacity: "INDEXES",
-        ConditionExpression: 'attribute_not_exists(OrgID) AND attribute_not_exists(SortKey)'  
-    };
-    await docClient.put(params, (err, data) => {
-       if (err) {
-           console.error(`Unable to add feeds in file ${file}`, params.Item.ID, ". Error JSON:", JSON.stringify(err, null, 2));
-       } else {
-            console.log("File :"+ file+ " Success: "+ params.Item.ID );
-            fs.appendFileSync(`./ResultInsert/Insert_Output_${params.Item.OrgID}.json`,JSON.stringify(params.Item, null, "\t")+",\n", 'utf8');
+        TransactItems: [
+            // {
+            //     ConditionCheck: {
+            //         ConditionExpression: 'SentimentFeedbackItemCount < :MAX',
+            //         Key: {
+            //             'OrgId': dataItem.OrgId,
+            //             'SortKey': 'SentimentFeedbackItemCount'
+            //         },
+            //         TableName: process.env.dbName,
+            //         ExpressionAttributeValues: {
+            //             ':MAX': 2000
+            //         },
+            //         ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+            //     },
+            // }, 
+            {
+                Put: {
+                    Item: dataItem,
+                    TableName: process.env.dbName,
+                    ConditionExpression: '(attribute_not_exists(OrgId) AND attribute_not_exists(SortKey)) AND (attribute_not_exists(OrgId) AND attribute_not_exists(ID))',
+                    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+                }
+            },
+            {
+                Update: {
+                    Key: {
+                        'OrgId': dataItem.OrgId,
+                        'SortKey': 'SentimentFeedbackItemCount'
+                    },
+                    TableName: process.env.dbName,
+                    UpdateExpression: 'ADD SentimentFeedbackItemCount :incr',
+                    ExpressionAttributeValues: {
+                        ':incr': 1
+                    },
+                    ReturnValuesOnConditionCheckFailure: "NONE",
+                }
+            }
+                
+        ],
 
-       }
-    });
+    ReturnConsumedCapacity: "INDEXES"
+};
+await docClient.transactWrite(params, (err, data) => {
+    if (err) {
+        console.error(`Unable to add feeds in file ${file}`, params, ". Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("File :" + file + " Success: " + params.TransactItems);
+        fs.appendFileSync(`./ResultInsert/Insert_Output_${params.TransactItems}.json`, JSON.stringify(params.TransactItems.Put, null, "\t") + ",\n", 'utf8');
+
+    }
+});
 }
 
 generateResultDir();

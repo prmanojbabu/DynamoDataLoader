@@ -25,29 +25,29 @@ var params = {
     TableName : process.env.dbName,
     BillingMode: "PAY_PER_REQUEST",
     AttributeDefinitions: [
-        { AttributeName: "OrgID", AttributeType: "S" },
+        { AttributeName: "OrgId", AttributeType: "S" },
         { AttributeName: "SortKey", AttributeType: "S" },
         { AttributeName: "TranscriptId", AttributeType: "S"},
         { AttributeName: "ModifiedDate", AttributeType: "S"},
+        { AttributeName: "Id", AttributeType: "S"},
     ],
     KeySchema: [       
-        { AttributeName: "OrgID", KeyType: "HASH"},  //Partition key
+        { AttributeName: "OrgId", KeyType: "HASH"},  //Partition key
         { AttributeName: "SortKey", KeyType: "RANGE" }, //Sort key
 
     ],
     Tags: [{ Key: "Owner" , Value: "Dev-CloudSTAFeedbackService@genesys.com"}],
     LocalSecondaryIndexes: [
         {
-          IndexName: 'Index-OrgID-TranscriptId',
+          IndexName: 'Index-OrgId-TranscriptId',
           KeySchema: [ 
-            { AttributeName: "OrgID", KeyType: "HASH"}, 
+            { AttributeName: "OrgId", KeyType: "HASH"}, 
             { AttributeName: "TranscriptId", KeyType: "RANGE"},
           ],
           Projection: {
             NonKeyAttributes: [
-                "ID",
                 "Phrase",
-                "SentimentFeedbackValue",
+                "SentimentFeedbackValue", 
                 "SentimentInitialValue",
                 "ModifiedBy",
                 "StemmedPhrase",
@@ -58,14 +58,13 @@ var params = {
           }
         },
         {
-            IndexName: 'Index-OrgID-ModifiedDate',
+            IndexName: 'Index-OrgId-ModifiedDate',
             KeySchema: [ 
-              { AttributeName: "OrgID", KeyType: "HASH"}, 
+              { AttributeName: "OrgId", KeyType: "HASH"}, 
               { AttributeName: "ModifiedDate", KeyType: "RANGE"},
             ],
             Projection: {
                 NonKeyAttributes: [
-                    "ID",
                     "Phrase",
                     "SentimentFeedbackValue",
                     "SentimentInitialValue",
@@ -76,7 +75,17 @@ var params = {
                 ],
                 ProjectionType: "INCLUDE"
               }
-          }
+          },
+          {
+            IndexName: 'Index-OrgId-Id',
+            KeySchema: [ 
+              { AttributeName: "OrgId", KeyType: "HASH"}, 
+              { AttributeName: "Id", KeyType: "RANGE"},
+            ],
+            Projection: {
+                ProjectionType: "KEYS_ONLY"
+              }
+          },
       ]
 };
 

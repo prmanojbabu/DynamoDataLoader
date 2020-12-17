@@ -36,8 +36,8 @@ async function ImportFile(dir, file)
 async function ImportData(file)
 {
     console.log(`Importing the File ${file}`);
-    var allOrgID = JSON.parse(fs.readFileSync(file, 'utf8'));
-    await Promise.all(allOrgID.map(async (orgID) => { await QueryDataByOrgID(orgID); }));
+    var allOrgId = JSON.parse(fs.readFileSync(file, 'utf8'));
+    await Promise.all(allOrgId.map(async (OrgId) => { await QueryDataByOrgId(OrgId); }));
 }
 
 function generateDir()
@@ -53,57 +53,57 @@ function generateDir()
     }
 }
 
-async function QueryDataByOrgID(orgID)
+async function QueryDataByOrgId(OrgId)
 {
     var awsdynamo = new AWS.DynamoDB();
     params = {
         TableName : process.env.dbName,
-        KeyConditionExpression: "OrgID = :orgval",
+        KeyConditionExpression: "OrgId = :orgval",
         ExpressionAttributeValues: {
-            ":orgval": {S: orgID}
+            ":orgval": {S: OrgId}
         },
        Limit: '2000',
-       ReturnConsumedCapacity: 'TOTAL', // | TOTAL | NONE,
-       ProjectionExpression:"OrgID, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
-       // Select: "COUNT", //Select: ALL_ATTRIBUTES | ALL_PROJECTED_ATTRIBUTES | SPECIFIC_ATTRIBUTES | COUNT
+       ReturnConsumedCapacity: 'TOTAL', 
+       ProjectionExpression:"OrgId, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
+       
     };
-    console.log(`Quering for Org : ${orgID}`);
-    console.time(orgID);
+    console.log(`Quering for Org : ${OrgId}`);
+    console.time(OrgId);
     awsdynamo.query(params, function(err, data) {
         if (err) {
             console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
         } else {
-            console.timeEnd(orgID);
-            fs.writeFileSync(`./ResultFiles/query_${orgID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
+            console.timeEnd(OrgId);
+            fs.writeFileSync(`./ResultFiles/query_${OrgId}.json`, JSON.stringify(data, null, "\t"), 'utf8');
         }
     });
 }
 
-async function GetDataByOrgID(orgID)  // Dont Use it
+async function GetDataByOrgId(OrgId)  // Dont Use it
 {
     var awsdynamo = new AWS.DynamoDB();
     params = {
         TableName : process.env.dbName,
         Key: {
-            "OrgID": {
-              S: orgID
+            "OrgId": {
+              S: OrgId
              },
              "ID":{
               S: "1f7a0d2d-9faf-4307-bea9-ca43caf60929"   
              }
            }, 
        ReturnConsumedCapacity: 'TOTAL', // | TOTAL | NONE,
-       ProjectionExpression:"OrgID, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
+       ProjectionExpression:"OrgId, ID, Phrase, SentimentFeedbackValue,SentimentInitialValue,SourceInteractionID,CreatedBy,CreatedDate",
        // Select: "COUNT", //Select: ALL_ATTRIBUTES | ALL_PROJECTED_ATTRIBUTES | SPECIFIC_ATTRIBUTES | COUNT
     };
-    console.log(`Get for Org : ${orgID}`);
-    console.time(orgID);
+    console.log(`Get for Org : ${OrgId}`);
+    console.time(OrgId);
     awsdynamo.getItem(params, function(err, data) {
         if (err) {
             console.log("Unable to Get. Error:", JSON.stringify(err, null, 2));
         } else {
-            console.timeEnd(orgID);
-            fs.writeFileSync(`./ResultFiles/Get_${orgID}.json`, JSON.stringify(data, null, "\t"), 'utf8');
+            console.timeEnd(OrgId);
+            fs.writeFileSync(`./ResultFiles/Get_${OrgId}.json`, JSON.stringify(data, null, "\t"), 'utf8');
         }
     });
 }

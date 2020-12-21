@@ -66,8 +66,9 @@ function generateData()
                 "TranscriptId":  _.sample([faker.random.uuid(), undefined]),
                 "SentimentFeedbackValue" : feedbackValue,
                 "SentimentInitialValue" : initialValue,
-                "ModifiedBy": faker.random.uuid(),
-                "ModifiedDate": faker.date.between('2000-01-01T00:00:00.000Z', '2020-12-01T00:00:00.000Z'),
+                "CreatedBy": faker.random.uuid(),
+                "CreatedDate": faker.date.between('2000-01-01T00:00:00.000Z', '2020-12-01T00:00:00.000Z'),
+
                 "IsDeleted": false,
                 "SortKey" : `SentimentFeedback|Lang_${langdetect.detectOne(phrase)}|StemmedPhrase_${stemmer_es.stem(phrase)}`
                 };

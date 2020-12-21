@@ -27,13 +27,11 @@ async function getSortKey(InputOrgId,InputId)
        ProjectionExpression:"SortKey",
     };
     
-
     awsdynamo.query(params, function(err, data) {
         if (err) {
             console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
         } else {
-            
-            console.log(JSON.stringify(data));
+            console.log(JSON.stringify(data.Items[0].SortKey.S));
             deleteItem(InputOrgId,data.Items[0].SortKey.S);
         }
     });
@@ -63,14 +61,15 @@ async function deleteItem(InputOrgId, InputSortKey)
                 Update: {
                     Key: {
                         'OrgId': InputOrgId,
-                        'SortKey':  'SentimentFeedbackItemCount'
                     },
-                    TableName: process.env.dbName,
-                    UpdateExpression: 'ADD SentimentFeedbackItemCount :n',
+                    TableName: process.env.dbMetaDataName,
+                    UpdateExpression: 'ADD SentimentFeedbackItemCount :incr SET LastUpdateDate = :currentdate',
                     ExpressionAttributeValues: {
-                        ':n': -1
+                        ':incr': -1,
+                        ':currentdate' : new Date().toUTCString()
                     },
-                    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+                    ReturnValuesOnConditionCheckFailure: "NONE",
+
                 }
             }
     
@@ -78,10 +77,16 @@ async function deleteItem(InputOrgId, InputSortKey)
     
         ReturnConsumedCapacity: "INDEXES"
     };
+
+    console.time("deletetime")
+
     docClient.transactWrite(params, (err, data) => {
         if (err) {
             console.error(JSON.stringify(err, null, 2));
         } else {
+
+            console.timeEnd("deletetime");
+
             console.log(" Success: ");
     
         }

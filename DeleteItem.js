@@ -69,6 +69,7 @@ async function deleteItem(InputOrgId, InputSortKey)
                         ':currentdate' : new Date().toUTCString()
                     },
                     ReturnValuesOnConditionCheckFailure: "NONE",
+
                 }
             }
     
@@ -76,12 +77,16 @@ async function deleteItem(InputOrgId, InputSortKey)
     
         ReturnConsumedCapacity: "INDEXES"
     };
+
     console.time("deletetime")
+
     docClient.transactWrite(params, (err, data) => {
         if (err) {
             console.error(JSON.stringify(err, null, 2));
         } else {
+
             console.timeEnd("deletetime");
+
             console.log(" Success: ");
     
         }

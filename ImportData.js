@@ -82,12 +82,12 @@ async function putData(file, dataItem)
                 Update: {
                     Key: {
                         'OrgId': dataItem.OrgId,
-                        'SortKey': 'SentimentFeedbackItemCount'
                     },
-                    TableName: process.env.dbName,
-                    UpdateExpression: 'ADD SentimentFeedbackItemCount :incr',
+                    TableName: process.env.dbMetaDataName,
+                    UpdateExpression: 'ADD SentimentFeedbackItemCount :incr SET LastUpdateDate = :currentdate',
                     ExpressionAttributeValues: {
-                        ':incr': 1
+                        ':incr': 1,
+                        ':currentdate' : new Date().toUTCString()
                     },
                     ReturnValuesOnConditionCheckFailure: "NONE",
                 }

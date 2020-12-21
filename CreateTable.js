@@ -21,15 +21,14 @@ AWS.config.update({
 
 var dynamodb = new AWS.DynamoDB();
 
-var params = {
+var params_main = {
     TableName : process.env.dbName,
     BillingMode: "PAY_PER_REQUEST",
     AttributeDefinitions: [
         { AttributeName: "OrgId", AttributeType: "S" },
         { AttributeName: "SortKey", AttributeType: "S" },
         { AttributeName: "TranscriptId", AttributeType: "S"},
-        { AttributeName: "ModifiedDate", AttributeType: "S"},
-        { AttributeName: "Id", AttributeType: "S"},
+        { AttributeName: "Id", AttributeType: "S"}
     ],
     KeySchema: [       
         { AttributeName: "OrgId", KeyType: "HASH"},  //Partition key
@@ -49,7 +48,8 @@ var params = {
                 "Phrase",
                 "SentimentFeedbackValue", 
                 "SentimentInitialValue",
-                "ModifiedBy",
+                "CreatedBy",
+                "CreatedDate",
                 "StemmedPhrase",
                 "Language",
                 "IsDeleted"
@@ -58,41 +58,46 @@ var params = {
           }
         },
         {
-            IndexName: 'Index-OrgId-ModifiedDate',
-            KeySchema: [ 
-              { AttributeName: "OrgId", KeyType: "HASH"}, 
-              { AttributeName: "ModifiedDate", KeyType: "RANGE"},
-            ],
-            Projection: {
-                NonKeyAttributes: [
-                    "Phrase",
-                    "SentimentFeedbackValue",
-                    "SentimentInitialValue",
-                    "ModifiedBy",
-                    "StemmedPhrase",
-                    "Language",
-                    "IsDeleted"
-                ],
-                ProjectionType: "INCLUDE"
-              }
-          },
-          {
             IndexName: 'Index-OrgId-Id',
-            KeySchema: [ 
-              { AttributeName: "OrgId", KeyType: "HASH"}, 
-              { AttributeName: "Id", KeyType: "RANGE"},
+            KeySchema: [
+                { AttributeName: "OrgId", KeyType: "HASH" },
+                { AttributeName: "Id", KeyType: "RANGE" },
             ],
             Projection: {
                 ProjectionType: "KEYS_ONLY"
-              }
-          },
+            }
+        },
       ]
 };
 
-dynamodb.createTable(params, function(err, data) {
+var params_Metadata = {
+    TableName : process.env.dbMetaDataName,
+    BillingMode: "PAY_PER_REQUEST",
+    AttributeDefinitions: [
+        { AttributeName: "OrgId", AttributeType: "S" },
+    ],
+    KeySchema: [       
+        { AttributeName: "OrgId", KeyType: "HASH"},  //Partition key
+
+    ],
+    Tags: [{ Key: "Owner" , Value: "Dev-CloudSTAFeedbackService@genesys.com"}],
+    
+};
+
+dynamodb.createTable(params_main, function(err, data) {
     if (err) {
         console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
     } else {
         console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+        console.log("Main Table Created Successfully");
+    }
+});
+
+dynamodb.createTable(params_Metadata, function(err, data) {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+        console.log("Meta Data Created Successfully");
     }
 });

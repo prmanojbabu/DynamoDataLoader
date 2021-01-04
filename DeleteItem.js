@@ -43,17 +43,12 @@ async function deleteItem(InputOrgId, InputSortKey)
     var params = {
         TransactItems: [
             {
-                Update: {
+                Delete: {
                     Key: {
                         'OrgId': InputOrgId,
                         'SortKey':  InputSortKey
                     },
                     TableName: process.env.dbName,
-                    UpdateExpression: 'Set IsDeleted = :del',
-                    
-                    ExpressionAttributeValues: {
-                        ':del': true,
-                    },
                     ReturnValuesOnConditionCheckFailure: "ALL_OLD",
                 }
             },

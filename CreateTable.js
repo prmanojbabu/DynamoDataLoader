@@ -52,7 +52,6 @@ var params_main = {
                 "CreatedDate",
                 "StemmedPhrase",
                 "Language",
-                "IsDeleted"
             ],
             ProjectionType: "INCLUDE"
           }

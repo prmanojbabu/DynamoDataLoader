@@ -94,7 +94,6 @@ async function putData(file, dataItem)
             }
                 
         ],
-
     ReturnConsumedCapacity: "INDEXES"
 };
 await docClient.transactWrite(params, (err, data) => {

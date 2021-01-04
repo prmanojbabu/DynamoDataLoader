@@ -43,7 +43,9 @@ async function deleteItem(InputOrgId, InputSortKey)
     var params = {
         TransactItems: [
             {
+
                 Delete: {
+
                     Key: {
                         'OrgId': InputOrgId,
                         'SortKey':  InputSortKey
@@ -71,6 +73,7 @@ async function deleteItem(InputOrgId, InputSortKey)
     
         ReturnConsumedCapacity: "INDEXES"
     };
+
     console.time("deletetime")
     docClient.transactWrite(params, (err, data) => {
         if (err) {

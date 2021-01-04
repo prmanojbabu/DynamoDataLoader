@@ -43,17 +43,14 @@ async function deleteItem(InputOrgId, InputSortKey)
     var params = {
         TransactItems: [
             {
-                Update: {
+
+                Delete: {
+
                     Key: {
                         'OrgId': InputOrgId,
                         'SortKey':  InputSortKey
                     },
                     TableName: process.env.dbName,
-                    UpdateExpression: 'Set IsDeleted = :del',
-                    
-                    ExpressionAttributeValues: {
-                        ':del': true,
-                    },
                     ReturnValuesOnConditionCheckFailure: "ALL_OLD",
                 }
             },
@@ -69,7 +66,6 @@ async function deleteItem(InputOrgId, InputSortKey)
                         ':currentdate' : new Date().toUTCString()
                     },
                     ReturnValuesOnConditionCheckFailure: "NONE",
-
                 }
             }
     
@@ -79,14 +75,11 @@ async function deleteItem(InputOrgId, InputSortKey)
     };
 
     console.time("deletetime")
-
     docClient.transactWrite(params, (err, data) => {
         if (err) {
             console.error(JSON.stringify(err, null, 2));
         } else {
-
             console.timeEnd("deletetime");
-
             console.log(" Success: ");
     
         }

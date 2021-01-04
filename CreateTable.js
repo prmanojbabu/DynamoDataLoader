@@ -29,7 +29,6 @@ var params_main = {
         { AttributeName: "SortKey", AttributeType: "S" },
         { AttributeName: "TranscriptId", AttributeType: "S"},
         { AttributeName: "Id", AttributeType: "S"}
-
     ],
     KeySchema: [       
         { AttributeName: "OrgId", KeyType: "HASH"},  //Partition key
@@ -53,7 +52,6 @@ var params_main = {
                 "CreatedDate",
                 "StemmedPhrase",
                 "Language",
-                "IsDeleted"
             ],
             ProjectionType: "INCLUDE"
           }
@@ -68,7 +66,6 @@ var params_main = {
                 ProjectionType: "KEYS_ONLY"
             }
         },
-
       ]
 };
 

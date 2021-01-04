@@ -88,14 +88,12 @@ async function putData(file, dataItem)
                     ExpressionAttributeValues: {
                         ':incr': 1,
                         ':currentdate' : new Date().toUTCString()
-
                     },
                     ReturnValuesOnConditionCheckFailure: "NONE",
                 }
             }
                 
         ],
-
     ReturnConsumedCapacity: "INDEXES"
 };
 await docClient.transactWrite(params, (err, data) => {

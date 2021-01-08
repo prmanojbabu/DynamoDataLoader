@@ -2,6 +2,7 @@
     "Region": "us-east-1",
     "MainTableNamePrefix": "STA_FeedBack",
     "MetaDataTableNamePrefix": "STA_FeedBack_MetaData",
+    "MaxCountPerFile": 20000,
     "DBSampling": [
         {
             "OrganizationCount": 5,
@@ -14,7 +15,7 @@
         {
             "OrganizationCount": 20,
             "TotalRecordPerOrg": 2000
-        }
+        },
         {
             "OrganizationCount": 100,
             "TotalRecordPerOrg": 1000
@@ -27,6 +28,5 @@
             "OrganizationCount": 2000,
             "TotalRecordPerOrg": 2000
         }
-    ],
-    "MaxCountPerFile": 20000
+    ]
 }

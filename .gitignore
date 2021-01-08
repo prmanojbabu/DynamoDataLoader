@@ -105,5 +105,6 @@ dist
 
 # Dependency directories
 SampleDataFiles/
+SampleDataFiles copy/
 ResultFiles/
 ResultInsert/

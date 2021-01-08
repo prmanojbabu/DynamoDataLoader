@@ -28,22 +28,23 @@ async function ImportDataSample(config)
             new Promise((resolve, reject) =>
             {
             const TableName = `${config.MainTableNamePrefix}_Main_${element.OrganizationCount}_${element.TotalRecordPerOrg}_${element.OrganizationCount*element.TotalRecordPerOrg}`;
+            const MetaTableName = `${config.MainTableNamePrefix}_Main_${element.OrganizationCount}_${element.TotalRecordPerOrg}_${element.OrganizationCount*element.TotalRecordPerOrg}`;
             var dir = `./SampleDataFiles/${TableName}`;
-            resolve(ImportDir(dir));
+            resolve(ImportDir(dir,TableName,MetaTableName));
             }));
         });
     await Promise.all(createJobs);
 }
 
 
-function ImportDir(dir){
+function ImportDir(dir,TableName,MetaTableName){
     var files = [];
     fs.stat(dir, async (err, stat) => {
         if(err == null) {
             console.log("Importing sample data into DynamoDB. Please wait.");
-            console.log('FeedBack Data folder exist');
+            console.log(`Reading directory ${dir}`);
             files = fs.readdirSync(dir);
-            await Promise.all(files.map(async (file) => { await ImportFile(dir,file); }));
+            await Promise.all(files.map(async (file) => { await ImportFile(dir,file,TableName,MetaTableName); }));
         } else if(err.code === 'ENOENT') {
             console.log('FeedBack Data File doesn\'t exists');
             process.exit(1);
@@ -54,14 +55,14 @@ function ImportDir(dir){
     });
 }
 
-async function ImportFile(dir, file)
+async function ImportFile(dir, file, TableName,MetaTableName)
 {
-    await ImportData(dir+'/'+file);
+    await ImportData(dir+'/'+file,TableName,MetaTableName);
 }
 
-async function ImportData(MainTableName,MetaDataTable,File)
+async function ImportData(File,MainTableName,MetaDataTable)
 {
-    console.log(`Importing the File ${file}`);
+    console.log(`Importing the File ${File}`);
     var allfeedback = JSON.parse(fs.readFileSync(File, 'utf8'));
     await Promise.all(allfeedback.map(async (dataItem) => { await putData(dataItem, MainTableName, MetaDataTable); }));
 }
@@ -110,7 +111,7 @@ async function putData(dataItem, MainTableName, MetaDataTable)
         ],
     ReturnConsumedCapacity: "INDEXES"
 };
-await WriteTransaction(param);
+await WriteTransaction(params);
 }
 
 async function WriteTransaction(params)

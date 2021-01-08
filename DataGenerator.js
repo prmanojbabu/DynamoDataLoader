@@ -15,7 +15,9 @@ function generateDir(dir)
     }
     else
     {
+        console.log(`Deleting Directory ${dir}`);
         fs.rmdirSync(dir, { recursive: true });
+        console.log(`Creating Directory ${dir}`);
         fs.mkdirSync(dir);
     }
     return dir;
@@ -26,6 +28,8 @@ async function GenerateDB(config)
     maxCount = config.MaxCountPerFile;
     const createJobs = []
     config.DBSampling.forEach(element => {
+    //     GenerateTableSample(config.MainTableNamePrefix, element.OrganizationCount, element.TotalRecordPerOrg);
+    // });
         createJobs.push(
             new Promise((resolve, reject) =>
             {
@@ -99,6 +103,7 @@ function GenerateSingleFeedback(OrgId, TestDir)
     var TranscriptId= _.sample([faker.random.uuid(), undefined]);
     var CreatedBy = faker.random.uuid();
     var CreatedDate = faker.date.between('2000-01-01T00:00:00.000Z', '2021-12-01T00:00:00.000Z').toISOString();
+    writeLambdaFile(TestDir,OrgId,Id,TranscriptId);
     var item = {
                 "OrgId":  OrgId,
                 "SortKey" : `SentimentFeedback|Lang_${Language}|StemmedPhrase_${StemmedPhrase}`,
@@ -112,10 +117,14 @@ function GenerateSingleFeedback(OrgId, TestDir)
                 "CreatedBy": CreatedBy,
                 "CreatedDate": CreatedDate,
                 };
+    return item;
+}
+
+async function writeLambdaFile(TestDir,OrgId,Id,TranscriptId)
+{
     fs.appendFileSync(TestDir+'/LambdaOrgId_Id.json',JSON.stringify({OrgId, Id}, null, 4)+ ",\n",'utf8');
     if(TranscriptId)
     fs.appendFileSync(TestDir+'/LambdaOrgId_TranscriptId.json',JSON.stringify({OrgId, TranscriptId}, null, 4)+ ",\n",'utf8');
-    return item;
 }
 
 // GenerateTableSample('STA_FeedBack',3,16);

@@ -7,9 +7,8 @@ const { promises } = require('dns');
 var SentimentEnum = ["Positive", "Negative","Neutral"];
 var maxCount = 50000;
 
-function generateDir(TableNamePrefix)
+function generateDir(dir)
 {
-    var dir = `./SampleDataFiles/${TableNamePrefix}`;
     if (!fs.existsSync(dir)){
         console.log(`Creating Directory ${dir}`);
         fs.mkdirSync(dir,{ recursive: true });
@@ -30,7 +29,7 @@ async function GenerateDB(config)
         createJobs.push(
             new Promise((resolve, reject) =>
             {
-            resolve(GenerateTableSample(config.MainTableNamePrefix, element.OrganizationCount, element.TotalRecordPerOrg));
+                resolve(GenerateTableSample(config.MainTableNamePrefix, element.OrganizationCount, element.TotalRecordPerOrg));
             }));
         });
     await Promise.all(createJobs);
@@ -39,15 +38,25 @@ async function GenerateDB(config)
 async function GenerateTableSample(MainTableNamePrefix, OrganizationCount,TotalRecordPerOrg)
 {
     var TableSamples = [];
+    var Jobs = [];
     var TableNamePrefix = `${MainTableNamePrefix}_Main_${OrganizationCount}_${TotalRecordPerOrg}_${OrganizationCount*TotalRecordPerOrg}`;
-    var dir = generateDir(TableNamePrefix);
+    var dir = generateDir(`./SampleDataFiles/${TableNamePrefix}`);
+    var TestDir = generateDir(`./SampleTestDataFiles/${TableNamePrefix}`);
     var FileCounter = 0;
     var FilePath = `${dir}/${FileCounter}.json`;
     var loopCounter = 0;
     for(var k =1; k <= OrganizationCount; k++)
     {
-        var items = await GenerateOrgData(TotalRecordPerOrg);
-        items.forEach((element, index)=> 
+        Jobs.push(
+            new Promise((resolve, reject) =>
+            {
+                resolve(GenerateOrgData(TotalRecordPerOrg, TestDir));
+            }));
+    }
+    var result = await Promise.all(Jobs);
+    result.forEach((item, index) => 
+    {
+        item.forEach((element, index)=> 
         {
             TableSamples.push(element);
             loopCounter++;
@@ -60,25 +69,26 @@ async function GenerateTableSample(MainTableNamePrefix, OrganizationCount,TotalR
                 TableSamples = [];
             }
         });
-    }
+    });
 }
 
-async function GenerateOrgData(TotalRecordPerOrg)
+async function GenerateOrgData(TotalRecordPerOrg, TestDir)
 {
     const createJobs = [];
     var OrgId = faker.random.uuid();
+    fs.appendFileSync(TestDir+'/LambdaOrgId.json',JSON.stringify(OrgId, null, 4)+ ",\n",'utf8');
     for(var i=1; i<=TotalRecordPerOrg; i++)
     {
         createJobs.push(
             new Promise((resolve, reject) =>
             {
-                resolve(GenerateSingleFeedback(OrgId));
+                resolve(GenerateSingleFeedback(OrgId, TestDir));
             }));
     }
     return await Promise.all(createJobs);
 }
 
-function GenerateSingleFeedback(OrgId)
+function GenerateSingleFeedback(OrgId, TestDir)
 {
     var SentimentFeedbackValue = _.sample(SentimentEnum);
     var SentimentInitialValue =  _.sample((_.filter(SentimentEnum, (x)=> {return x!=SentimentFeedbackValue;})));
@@ -102,6 +112,9 @@ function GenerateSingleFeedback(OrgId)
                 "CreatedBy": CreatedBy,
                 "CreatedDate": CreatedDate,
                 };
+    fs.appendFileSync(TestDir+'/LambdaOrgId_Id.json',JSON.stringify({OrgId, Id}, null, 4)+ ",\n",'utf8');
+    if(TranscriptId)
+    fs.appendFileSync(TestDir+'/LambdaOrgId_TranscriptId.json',JSON.stringify({OrgId, TranscriptId}, null, 4)+ ",\n",'utf8');
     return item;
 }
 

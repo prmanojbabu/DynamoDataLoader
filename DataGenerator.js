@@ -39,7 +39,7 @@ async function GenerateDB(config)
 async function GenerateTableSample(MainTableNamePrefix, OrganizationCount,TotalRecordPerOrg)
 {
     var TableSamples = [];
-    var TableNamePrefix = `${MainTableNamePrefix}_${OrganizationCount}_${TotalRecordPerOrg}_${OrganizationCount*TotalRecordPerOrg}`;
+    var TableNamePrefix = `${MainTableNamePrefix}_Main_${OrganizationCount}_${TotalRecordPerOrg}_${OrganizationCount*TotalRecordPerOrg}`;
     var dir = generateDir(TableNamePrefix);
     var FileCounter = 0;
     var FilePath = `${dir}/${FileCounter}.json`;

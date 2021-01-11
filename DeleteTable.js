@@ -31,11 +31,21 @@ async function DeleteDynamoTable(params)
     console.log('Deleting '+ params.TableName);
     await dynamodb.deleteTable(params, function(err, data) {
         if (err) {
-            console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+            console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
         } else {
             console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
         }
     });
 }
 
+
+// AWS.config.update({
+//     region: "us-east-1"
+// });
+
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_100_1000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_20_1000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_20_2000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_500_2000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_5_400`});
 module.exports = {DeleteSampleTables};

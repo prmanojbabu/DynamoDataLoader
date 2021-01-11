@@ -82,7 +82,7 @@ async function CreateTable(Prefix, Suffix)
         
     };
     CreateDynamoTable(params_Main);
-    CreateDynamoTable(params_Metadata);
+    // CreateDynamoTable(params_Metadata);
 }
 
 async function CreateDynamoTable(params)

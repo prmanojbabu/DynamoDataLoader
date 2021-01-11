@@ -43,9 +43,14 @@ async function DeleteDynamoTable(params)
 //     region: "us-east-1"
 // });
 
-// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_100_1000`});
-// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_20_1000`});
-// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_20_2000`});
-// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_500_2000`});
-// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_Test_5_400`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_5_400_2000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_5_4000_20000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_20_1000_20000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_20_2000_40000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_100_1000_100000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_2000_1000000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_3000_1500000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_4000_2000000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_2000_2000_4000000`});
+
 module.exports = {DeleteSampleTables};

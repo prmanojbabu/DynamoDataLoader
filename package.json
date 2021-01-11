@@ -10,7 +10,7 @@
         "stemmer_es": "^1.0.2"
     },
     "scripts": {
-       "serve" : "node --max-old-space-size=8912 StartMusic"
+       "serve" : "node --max-old-space-size=12912 StartMusic"
     }
     
 }

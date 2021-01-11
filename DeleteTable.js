@@ -22,7 +22,7 @@ async function DeleteTable(Prefix, Suffix)
     var params_Main = {TableName : `${Prefix}_Main_${Suffix}`};
     var params_Metadata = {TableName : `${Prefix}_MetaData_${Suffix}`};
     DeleteDynamoTable(params_Main);
-    DeleteDynamoTable(params_Metadata);
+    // DeleteDynamoTable(params_Metadata);
 }
 
 async function DeleteDynamoTable(params)

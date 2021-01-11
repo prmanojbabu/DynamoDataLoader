@@ -2,45 +2,12 @@
     "Region": "us-east-1",
     "MainTableNamePrefix": "STA_FeedBack",
     "MetaDataTableNamePrefix": "STA_FeedBack_MetaData",
-    "MaxCountPerFile": 20000,
     "Lambda": "STA_Feedback_Dynamo_Test",
+    "LambdaCount": 10000,
     "DBSampling": [
         {
-            "OrganizationCount": 5,
-            "TotalRecordPerOrg": 400
-        },
-        {
-            "OrganizationCount": 5,
-            "TotalRecordPerOrg": 4000
-        },
-        {
-            "OrganizationCount": 20,
-            "TotalRecordPerOrg": 1000
-        },
-        {
-            "OrganizationCount": 20,
-            "TotalRecordPerOrg": 2000
-        },
-        {
             "OrganizationCount": 100,
-            "TotalRecordPerOrg": 1000
-        },
-        {
-            "OrganizationCount": 500,
-            "TotalRecordPerOrg": 2000
-        },
-        {
-            "OrganizationCount": 500,
             "TotalRecordPerOrg": 3000
-        },
-        
-        {
-            "OrganizationCount": 500,
-            "TotalRecordPerOrg": 4000
-        },
-        {
-            "OrganizationCount": 2000,
-            "TotalRecordPerOrg": 2000
         }
     ]
 }

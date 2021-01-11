@@ -1,9 +1,11 @@
-var DataGenerator = require('./DataGenerator');
+var DataGeneratorV1 = require('./DataGeneratorV1');
 var CreateTable = require('./CreateTable');
 var DeleteTable = require('./DeleteTable');
-var ImportData = require('./ImportData');
+var QueryLambda = require('./QueryLambda');
+var CalculateLambda = require ('./CalculateLambda');
 var config = require('./ReadConfig');
-DataGenerator.GenerateDB(config);
 // CreateTable.CreateSampleTables(config);
-// ImportData.ImportDataSample(config);
+// DataGeneratorV1.GenerateTable(config);
 // DeleteTable.DeleteSampleTables(config);
+// QueryLambda.ImportDataSample(config);
+// CalculateLambda.CalculateDataSample();

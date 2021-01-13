@@ -78,20 +78,20 @@ async function putData(file, dataItem)
                     ReturnValuesOnConditionCheckFailure: "ALL_OLD",
                 }
             },
-            {
-                Update: {
-                    Key: {
-                        'OrgId': dataItem.OrgId,
-                    },
-                    TableName: process.env.dbMetaDataName,
-                    UpdateExpression: 'ADD SentimentFeedbackItemCount :incr SET LastUpdateDate = :currentdate',
-                    ExpressionAttributeValues: {
-                        ':incr': 1,
-                        ':currentdate' : new Date().toUTCString()
-                    },
-                    ReturnValuesOnConditionCheckFailure: "NONE",
-                }
-            }
+            // {
+            //     Update: {
+            //         Key: {
+            //             'OrgId': dataItem.OrgId,
+            //         },
+            //         TableName: process.env.dbMetaDataName,
+            //         UpdateExpression: 'ADD SentimentFeedbackItemCount :incr SET LastUpdateDate = :currentdate',
+            //         ExpressionAttributeValues: {
+            //             ':incr': 1,
+            //             ':currentdate' : new Date().toUTCString()
+            //         },
+            //         ReturnValuesOnConditionCheckFailure: "NONE",
+            //     }
+            // }
                 
         ],
 

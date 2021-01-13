@@ -74,6 +74,7 @@ async function ImportOrgDataForTable(File,MainTableName)
       PromiseJob.push(InvokeLambda(SampleEvent).catch(error => console.error(error)));
     }
     var result = await Promise.all(PromiseJob);
+    console.log(`Completed Sampling ${MainTableName} with ${orgIDs.length} orgIds with ${lambdaCount} process`);
     calculateResult(result);
 }
 

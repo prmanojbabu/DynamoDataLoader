@@ -104,6 +104,9 @@ dist
 .tern-port
 
 # Dependency directories
-dataFiles/
+SampleDataFiles/
+SampleTestDataFiles/
+SampleDataFiles copy/
 ResultFiles/
 ResultInsert/
+LambdaResultInsert/

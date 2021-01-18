@@ -8,5 +8,9 @@
         "lodash": "^4.17.20",
         "prompt-sync": "^4.2.0",
         "stemmer_es": "^1.0.2"
+    },
+    "scripts": {
+       "serve" : "node --max-old-space-size=12912 StartMusic"
     }
+    
 }

@@ -1,44 +1,56 @@
-
-/**
- * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * This file is licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License. A copy of
- * the License is located at
- *
- * http://aws.amazon.com/apache2.0/
- *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
-*/
 var AWS = require("aws-sdk");
-require('dotenv').config();
 
-AWS.config.update({
-  region: process.env.region
-});
+async function DeleteSampleTables(config)
+{
+    AWS.config.update({
+        region: config.Region
+    });
+    const createJobs = []
+    config.DBSampling.forEach(element => {
+        createJobs.push(
+            new Promise((resolve, reject) =>
+            {
+            const Suffix = `${element.OrganizationCount}_${element.TotalRecordPerOrg}_${element.OrganizationCount*element.TotalRecordPerOrg}`;
+            resolve(DeleteTable(config.MainTableNamePrefix, Suffix));
+            }));
+        });
+    await Promise.all(createJobs);
+}
 
-var dynamodb = new AWS.DynamoDB();
+async function DeleteTable(Prefix, Suffix)
+{
+    var params_Main = {TableName : `${Prefix}_Main_${Suffix}`};
+    var params_Metadata = {TableName : `${Prefix}_MetaData_${Suffix}`};
+    DeleteDynamoTable(params_Main);
+    // DeleteDynamoTable(params_Metadata);
+}
 
-var params_main = {
-    TableName : process.env.dbName,
-};
-var params_Metadata = {
-    TableName : process.env.dbMetaDataName,
-};
+async function DeleteDynamoTable(params)
+{
+    var dynamodb = new AWS.DynamoDB();
+    console.log('Deleting '+ params.TableName);
+    await dynamodb.deleteTable(params, function(err, data) {
+        if (err) {
+            console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
+        }
+    });
+}
 
-dynamodb.deleteTable(params_main, function(err, data) {
-    if (err) {
-        console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-        console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
-    }
-});
-dynamodb.deleteTable(params_Metadata, function(err, data) {
-    if (err) {
-        console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-        console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
-    }
-});
+
+// AWS.config.update({
+//     region: "us-east-1"
+// });
+
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_5_400_2000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_5_4000_20000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_20_1000_20000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_20_2000_40000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_100_1000_100000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_2000_1000000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_3000_1500000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_500_4000_2000000`});
+// DeleteDynamoTable({TableName : `STA_FeedBack_MetaData_2000_2000_4000000`});
+
+module.exports = {DeleteSampleTables};

@@ -95,14 +95,14 @@ function calculateResult(result)
     const MaxMaxMemory = _.maxBy(result, 'MaxMemory').MaxMemory;
     const AvgMaxMemory = _.meanBy(result, 'MaxMemory');
 
-    return  {
+    var data =  {
         DbName,
         DBConsumedTime:{Min: MinDBConsumedTime, Max: MaxDBConsumedTime, Avg: AvgDBConsumedTime},
         DBCapacityUnit: { Min:MinDBCapacityUnit, Max: MaxDBCapacityUnit, Avg: AvgDBCapacityUnit},
         MaxMemory:{Min: MinMaxMemory,Max: MaxMaxMemory, Avg:AvgMaxMemory},
         TotalSample
     };
-    
+    WriteStats(data);
 }
 
 async function InvokeLambda(SampleEvent)
@@ -113,7 +113,9 @@ async function InvokeLambda(SampleEvent)
     LogType: 'Tail'
   };
   const result = await (new AWS.Lambda().invoke(params).promise().catch((res) => console.log(res)));
-  const Payload = JSON.parse(result.Payload);
+  if(result)
+  {
+    const Payload = JSON.parse(result.Payload);
   var countItems = Payload.ItemsCount;
   var dbTime= Payload.DynamoDBTimeConsumed;
   var log = Buffer.from(result.LogResult, 'base64').toString('ascii');
@@ -124,6 +126,7 @@ async function InvokeLambda(SampleEvent)
   }
   if(dbTime && countItems > 0){
     return {DBName:SampleEvent.DBName, DBConsumedTime: Number(dbTime.replace(' ms','')), DBCapacityUnit: Number(Payload.ConsumedCapacity) , MaxMemory: MaxMemoryUsed};
+  }
   }
 }
 

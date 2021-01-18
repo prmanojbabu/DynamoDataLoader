@@ -1,6 +1,7 @@
 {
     "dependencies": {
-        "aws-sdk": "^2.803.0",
+        "@aws-sdk/client-lambda": "^3.3.0",
+        "aws-sdk": "^2.828.0",
         "dotenv": "^8.2.0",
         "faker": "^5.1.0",
         "langdetect": "^0.2.1",

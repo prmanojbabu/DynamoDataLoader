@@ -23,6 +23,9 @@ const {
     Runtime: "nodejs12.x",
     Description: "DB evaluation",
     MemorySize: 1024,
+    Tags: {
+        "Owner": "Dev-CloudSTAFeedbackService@genesys.com"
+       }, 
   };
   
   const run = async () => {
@@ -33,5 +36,5 @@ const {
       console.log("Error", err); // an error occurred
     }
   };
-  
+
   run();

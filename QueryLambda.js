@@ -4,7 +4,7 @@ var fs = require('fs');
 var _ = require('lodash');
 // AWS.config.update({region: 'us-east-1'});
 // const EventValue = {"DBName": "STA_FeedBack_Test_Table_100_1000","orgID": "d68ac6f1-7402-410f-a164-ba521b8b220c"};
-var lambda = 'STA_Feedback_Dynamo_Test';
+var lambda = 'STA_Feedback_Dynamo_CreateTest';
 var lambdaCount = 20000
 function generateResultDir()
 {

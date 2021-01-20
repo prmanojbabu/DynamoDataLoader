@@ -1,17 +1,19 @@
 {
     "dependencies": {
         "@aws-sdk/client-lambda": "^3.3.0",
+        "adm-zip": "^0.5.1",
         "aws-sdk": "^2.828.0",
         "dotenv": "^8.2.0",
         "faker": "^5.1.0",
         "langdetect": "^0.2.1",
         "language-identifier": "^1.0.8",
         "lodash": "^4.17.20",
+        "minizlib": "^2.1.2",
+        "object-sizeof": "^1.6.1",
         "prompt-sync": "^4.2.0",
         "stemmer_es": "^1.0.2"
     },
     "scripts": {
-       "serve" : "node --max-old-space-size=12912 StartMusic"
+        "serve": "node --max-old-space-size=12912 StartMusic"
     }
-    
 }

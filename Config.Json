@@ -2,7 +2,7 @@
     "Region": "us-east-1",
     "MainTableNamePrefix": "STA_FeedBack",
     "MetaDataTableNamePrefix": "STA_FeedBack_MetaData",
-    "Lambda": "STA_Feedback_Dynamo_Test",
+    "Lambda": "STA_Feedback_Dynamo_CreateTest",
     "LambdaCount": 10000,
     "DBSampling": [
         {"OrganizationCount": 5,"TotalRecordPerOrg": 400},

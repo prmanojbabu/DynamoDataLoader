@@ -37,8 +37,9 @@ async function  testLambdaSize()
             region: "us-east-1"
         });
         const result = await (new AWS.Lambda().invoke(params).promise().catch((res) => console.log(res)));
-            console.log(`${element.DBName} : ${element.toZip}`);
-            console.log(`${sizeof(result)/1024/1024} MB`);
+        
+        console.log(`${element.DBName} : ${element.toZip}`);
+        console.log(`${sizeof(result)/1024/1024} MB`);
     }
 }
 module.exports = {testLambdaSize};

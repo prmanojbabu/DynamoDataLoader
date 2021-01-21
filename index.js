@@ -25,15 +25,17 @@ async function QueryDataByOrgId(dbName,OrgId, toZip)
     var res = await executeQuery(params);
     const hrend = process.hrtime(hrstart);
     const timer= hrend[1] / 1000000 + ' ms';
+    const items = res.Items.map((record) => AWS.DynamoDB.Converter.unmarshall(record));
+    
     var response = { DBName: dbName,
         ORGID : OrgId,
         DynamoDBTimeConsumed: timer,
         Count :res.Count,
         ScannedCount: res.ScannedCount,
-        Items: res.Items,
+        Items: items,
         ConsumedCapacity:  res.ConsumedCapacity,
         LastEvaluatedKey: res.LastEvaluatedKey
-       };
+      };
     if(toZip === true)
     {
         // const buffer = Buffer.from(JSON.stringify(response), "utf-8");
